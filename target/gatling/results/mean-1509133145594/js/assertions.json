@@ -1,0 +1,10 @@
+{
+  "simulation": "qa.perfana.mean.gatling.setup.Mean",
+  "simulationId": "mean",
+  "start": 1509133145594,
+  "description": "null",
+  "scenarios": ["acceptanceTestScenario"],
+  "assertions": [
+
+  ]
+}
