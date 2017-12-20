@@ -11,11 +11,11 @@
     <properties>
  
         <encoding>UTF-8</encoding>
-        <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
+        <build.time.format>yyyyMMdd_HHmm</build.time.format>
         
         <!-- dependency versioning -->
-        <gatling.version>2.3.0</gatling.version>
-        <perfana-gatling-maven-plugin.version>0.0.1</perfana-gatling-maven-plugin.version>
+        <gatling.version>2.2.3</gatling.version>
+        <perfana-gatling-maven-plugin.version>0.0.9</perfana-gatling-maven-plugin.version>
 
         <!-- Perfana url  -->
         <perfanaUrl>http://localhost:3000</perfanaUrl>
@@ -53,8 +53,8 @@
         <!-- Default load settings -->
         <initialUsersPerSecond>1</initialUsersPerSecond>
         <targetUsersPerSecond>1</targetUsersPerSecond>
-        <rampUpPeriodInSeconds>60</rampUpPeriodInSeconds>
-        <constantUsagePeriodInSeconds>900</constantUsagePeriodInSeconds>
+        <rampupTimeInSeconds>60</rampupTimeInSeconds>
+        <constantLoadTimeInSeconds>900</constantLoadTimeInSeconds>
 
         <!-- Settings for the targets-io Dashboard -->
         <application>Mean</application>
@@ -84,6 +84,11 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
                     <groupId>io.gatling</groupId>
                     <artifactId>perfana-gatling-maven-plugin</artifactId>
                     <version>${perfana-gatling-maven-plugin.version}</version>
@@ -92,6 +97,24 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>build.time</name>
+                            <pattern>yyyyMMdd-HHmmss</pattern>
+                            <timeZone>CET</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>qa.perfana</groupId>
                 <artifactId>perfana-gatling-maven-plugin</artifactId>
@@ -110,24 +133,28 @@
                     <testRunId>${testRunId}</testRunId>
                     <CIBuildResultsUrl>${CIBuildResultsUrl}</CIBuildResultsUrl>
                     <rampupTimeInSeconds>${rampupTimeInSeconds}</rampupTimeInSeconds>
-                    <plannedDurationInSeconds>${plannedDurationInSeconds}</plannedDurationInSeconds>
+                    <constantLoadTimeInSeconds>${constantLoadTimeInSeconds}</constantLoadTimeInSeconds>
                     <assertResultsEnabled>${assertResultsEnabled}</assertResultsEnabled>
                     <perfanaEnabled>${perfanaEnabled}</perfanaEnabled>
                     <jvmArgs>
-                        <jvmArg>-Dscenario=${scenario}</jvmArg>
                         <jvmArg>-DtargetBaseUrl=${targetBaseUrl}</jvmArg>
                         <jvmArg>-DinitialUsersPerSecond=${initialUsersPerSecond}</jvmArg>
                         <jvmArg>-DtargetUsersPerSecond=${targetUsersPerSecond}</jvmArg>
-                        <jvmArg>-DrampUpPeriodInSeconds=${rampUpPeriodInSeconds}</jvmArg>
-                        <jvmArg>-DconstantUsagePeriodInSeconds=${constantUsagePeriodInSeconds}</jvmArg>
-                        <jvmArg>-Ddebug=${debug}</jvmArg>
+                        <jvmArg>-DrampupTimeInSeconds=${rampupTimeInSeconds}</jvmArg>
+                        <jvmArg>-DconstantLoadTimeInSeconds=${constantLoadTimeInSeconds}</jvmArg>
+                        <jvmArg>-DCIBuildResultsUrl=${CIBuildResultsUrl}</jvmArg>
                         <jvmArg>-DuseProxy=${useProxy}</jvmArg>
+                        <jvmArg>-Dscenario=${scenario}</jvmArg>
                         <jvmArg>-Dgatling.data.graphite.rootPathPrefix=${graphitePrefix}</jvmArg>
-                        <jvmArg>-Xms4g</jvmArg>
-                        <jvmArg>-Xmx4g</jvmArg>
+                        <jvmArg>-DisMasterScript=${isMasterScript}</jvmArg>
+                        <jvmArg>-Xms4G</jvmArg>
+                        <jvmArg>-Xmx4G</jvmArg>
                         <jvmArg>-Djavax.net.ssl.sessionCacheSize=1000</jvmArg>
                         <jvmArg>-XX:+UseG1GC</jvmArg>
                         <jvmArg>-XX:+ParallelRefProcEnabled</jvmArg>
+                        <jvmArg>-XX:+PrintGCDetails</jvmArg>
+                        <jvmArg>-XX:+PrintGCDateStamps</jvmArg>
+                        <jvmArg>-Xloggc:gc.log</jvmArg>
                     </jvmArgs>
                     <!--<fork>true</fork>-->
                     <propagateSystemProperties>false</propagateSystemProperties>
@@ -187,11 +214,11 @@
                 <testType>stressTest</testType>
                 <initialUsersPerSecond>1</initialUsersPerSecond>
                 <targetUsersPerSecond>100</targetUsersPerSecond>
-                <rampUpPeriodInSeconds>3600</rampUpPeriodInSeconds>
-                <constantUsagePeriodInSeconds>1</constantUsagePeriodInSeconds>
+                <rampupTimeInSeconds>3600</rampupTimeInSeconds>
+                <constantLoadTimeInSeconds>1</constantLoadTimeInSeconds>
                 <perfanaEnabled>true</perfanaEnabled>
                 <graphitePrefix>gatling2</graphitePrefix>
-                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${maven.build.timestamp}</testRunId>
+                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${build.time}</testRunId>
             </properties>
         </profile>
 
@@ -203,14 +230,13 @@
             <properties>
                 <activeProfileId>load</activeProfileId>
                 <testType>loadTest</testType>
-                <initialUsersPerSecond>0.5</initialUsersPerSecond>
-                <targetUsersPerSecond>0.5</targetUsersPerSecond>
-                <rampUpPeriodInSeconds>1</rampUpPeriodInSeconds>
-                <plannedDurationInSeconds>600</plannedDurationInSeconds>
-                <constantUsagePeriodInSeconds>600</constantUsagePeriodInSeconds>
+                <initialUsersPerSecond>1</initialUsersPerSecond>
+                <targetUsersPerSecond>1</targetUsersPerSecond>
+                <rampupTimeInSeconds>1</rampupTimeInSeconds>
+                <constantLoadTimeInSeconds>300</constantLoadTimeInSeconds>
                 <perfanaEnabled>true</perfanaEnabled>
                 <graphitePrefix>gatling2</graphitePrefix>
-                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${maven.build.timestamp}</testRunId>
+                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${build.time}</testRunId>
             </properties>
         </profile>
         <profile>
@@ -223,11 +249,11 @@
                 <testType>ENDURANCE</testType>
                 <initialUsersPerSecond>1</initialUsersPerSecond>
                 <targetUsersPerSecond>20</targetUsersPerSecond>
-                <rampUpPeriodInSeconds>1800</rampUpPeriodInSeconds>
-                <constantUsagePeriodInSeconds>172800</constantUsagePeriodInSeconds>
+                <rampupTimeInSeconds>1800</rampupTimeInSeconds>
+                <constantLoadTimeInSeconds>172800</constantLoadTimeInSeconds>
                 <perfanaEnabled>true</perfanaEnabled>
                 <graphitePrefix>gatling2</graphitePrefix>
-                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${maven.build.timestamp}</testRunId>
+                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${build.time}</testRunId>
             </properties>
         </profile>
 
@@ -242,11 +268,11 @@
                 <graphitePrefix>gatling2.nightly</graphitePrefix>
                 <initialUsersPerSecond>0.5</initialUsersPerSecond>
                 <targetUsersPerSecond>0.5</targetUsersPerSecond>
-                <rampUpPeriodInSeconds>1</rampUpPeriodInSeconds>
-                <constantUsagePeriodInSeconds>600</constantUsagePeriodInSeconds>
+                <rampupTimeInSeconds>1</rampupTimeInSeconds>
+                <constantLoadTimeInSeconds>600</constantLoadTimeInSeconds>
                 <perfanaEnabled>true</perfanaEnabled>
                 <graphitePrefix>gatling2</graphitePrefix>
-                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${maven.build.timestamp}</testRunId>
+                <testRunId>${application}-${applicationRelease}-${testType}-${testEnvironment}-${build.time}</testRunId>
             </properties>
         </profile>
 
