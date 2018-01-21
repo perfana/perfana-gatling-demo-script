@@ -49,8 +49,8 @@ atOnceUsers(1)
   * @return the initialized PopulationBuilder
   */
 def setupSingleScenario(scn: ScenarioBuilder): PopulationBuilder = scn.inject(
-rampUsersPerSec(Configuration.initialUsersPerSecond) to Configuration.targetUsersPerSecond during (Configuration.rampUpPeriodInSeconds),
-constantUsersPerSec(Configuration.targetUsersPerSecond) during(Configuration.constantUsagePeriodInSeconds)
+rampUsersPerSec(Configuration.initialUsersPerSecond) to Configuration.targetUsersPerSecond during (Configuration.rampupTimeInSeconds),
+constantUsersPerSec(Configuration.targetUsersPerSecond) during(Configuration.constantLoadTimeInSeconds)
 
 
 )
@@ -58,7 +58,7 @@ constantUsersPerSec(Configuration.targetUsersPerSecond) during(Configuration.con
 
 
 // Go!
-setUp(runnableScenarios).protocols(if (Configuration.isDebugActive) Configuration.httpDebugProtocol else Configuration.httpProtocol).maxDuration(Configuration.rampUpPeriodInSeconds + Configuration.constantUsagePeriodInSeconds)
+setUp(runnableScenarios).protocols(if (Configuration.isDebugActive) Configuration.httpDebugProtocol else Configuration.httpProtocol).maxDuration(Configuration.rampupTimeInSeconds + Configuration.constantLoadTimeInSeconds)
 
 
 }

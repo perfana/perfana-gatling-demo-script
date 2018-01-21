@@ -31,13 +31,13 @@ object Configuration {
   // get load figures
   val initialUsersPerSecond  = System.getProperty("initialUsersPerSecond").toDouble
   val targetUsersPerSecond  = System.getProperty("targetUsersPerSecond").toDouble
-  val rampUpPeriodInSeconds = ( System.getProperty("rampUpPeriodInSeconds").toLong, TimeUnit.SECONDS )
-  val constantUsagePeriodInSeconds = ( System.getProperty("constantUsagePeriodInSeconds").toLong, TimeUnit.SECONDS )
+  val rampupTimeInSeconds = ( System.getProperty("rampupTimeInSeconds").toLong, TimeUnit.SECONDS )
+  val constantLoadTimeInSeconds = ( System.getProperty("constantLoadTimeInSeconds").toLong, TimeUnit.SECONDS )
 
   System.out.println("initialUsersPerSecond: " + initialUsersPerSecond)
   System.out.println("targetUsersPerSecond: " + targetUsersPerSecond)
-  System.out.println("rampUpPeriodInSeconds: " + rampUpPeriodInSeconds)
-  System.out.println("constantUsagePeriodInSeconds: " + constantUsagePeriodInSeconds)
+  System.out.println("rampupTimeInSeconds: " + rampupTimeInSeconds)
+  System.out.println("constantLoadTimeInSeconds: " + constantLoadTimeInSeconds)
 
 
   /**
