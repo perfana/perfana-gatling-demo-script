@@ -89,7 +89,7 @@
                     <version>3.0.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>io.gatling</groupId>
+                    <groupId>qa.perfana</groupId>
                     <artifactId>perfana-gatling-maven-plugin</artifactId>
                     <version>${perfana-gatling-maven-plugin.version}</version>
                 </plugin>
