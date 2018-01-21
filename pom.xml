@@ -186,7 +186,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <targetBaseUrl>http://localhost:3333</targetBaseUrl>
+                <targetBaseUrl>http://mean:3000</targetBaseUrl>
                 <testEnvironment>tst</testEnvironment>
             </properties>
         </profile>
@@ -264,7 +264,7 @@
             </activation>
             <properties>
                 <activeProfileId>nightly</activeProfileId>
-                <testType>NIGHTLY</testType>
+                <testType>loadTest</testType>
                 <graphitePrefix>gatling2.nightly</graphitePrefix>
                 <initialUsersPerSecond>0.5</initialUsersPerSecond>
                 <targetUsersPerSecond>0.5</targetUsersPerSecond>
